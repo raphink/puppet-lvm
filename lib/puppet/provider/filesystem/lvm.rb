@@ -1,7 +1,7 @@
 Puppet::Type.type(:filesystem).provide :lvm do
     desc "Manages filesystem of a logical volume"
 
-    commands :filecmd => 'file'
+    commands :blkid => 'blkid'
 
     def create
         mkfs(@resource[:fs_type])
@@ -16,7 +16,7 @@ Puppet::Type.type(:filesystem).provide :lvm do
     end
 
     def fstype
-        filecmd('-sL', @resource[:name]).split[4]
+        /TYPE=\"(\S+)\"/.match(blkid(@resource[:name]))[1]
     rescue Puppet::ExecutionFailure
         nil
     end
