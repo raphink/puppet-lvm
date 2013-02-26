@@ -91,7 +91,7 @@ Puppet::Type.type(:logical_volume).provide :lvm do
 
             lvextend( '-L', new_size, path) || fail( "Cannot extend to size #{size} because lvextend failed." )
 
-            if  /type=\"(\S+)\"/.match(blkid(path))[1] =~ /ext[34]/
+            if /TYPE=\"(\S+)\"/.match(blkid(path)) {|m| m =~ /ext[34]/}
               resize2fs( path) || fail( "Cannot resize file system to size #{size} because resize2fs failed." )
             end
 
