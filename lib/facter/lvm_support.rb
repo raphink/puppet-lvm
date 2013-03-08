@@ -5,35 +5,57 @@
 # lvm_pv_[0-9]+: physical volume name
 # lvm_vg_[0-9]+: volume group name
 
-Facter.add("lvm_support") do
+# Generic LVM support
+Facter.add('lvm_support') do
   confine :kernel => :linux
+
   vgdisplay =  Facter::Util::Resolution.exec('which vgs')
-  if $?.exitstatus
-    vgs = %x[vgs -o name --noheadings 2> /dev/null]
-    setcode { 'yes'}
-    if vgs.length > 0
-      vg_num = 0
-      # gives all Volume Groups
-      vgs.each do |vg|
-        vg.strip!
-        Facter.add("lvm_vg_#{vg_num}") { setcode { vg } }
-        vg_num += 1
-      end
-      Facter.add("lvm_vgs") { setcode { vg_num } }
-      # gives all Physical Volumes
-      pvs = %x[pvs -o name --noheadings 2> /dev/null]
-      pv_num = 0
-      pvs.each do |pv|
-        pv.strip!
-        Facter.add("lvm_pv_#{pv_num}") { setcode { pv } }
-        pv_num += 1
-      end
-      Facter.add("lvm_pvs") { setcode { pv_num } }
-    else
-      Facter.add("lvm_vgs") { setcode { 0 } }
-      Facter.add("lvm_pvs") { setcode { %x[pvs -o name --noheadings 2> /dev/null].length } }
-    end
-  else
+  if vgdisplay.nil?
     setcode { 'no' }
+  else
+    setcode { 'yes' }
   end
+end
+
+# Default to no
+Facter.add('lvm_support') do
+  setcode { 'no' }
+end
+
+# VGs
+vg_list = []
+Facter.add('lvm_vgs') do
+  confine :lvm_support => :yes
+  vgs = Facter::Util::Resolution.exec('vgs -o name --noheadings 2>/dev/null')
+  if vgs.nil?
+    setcode { 0 }
+  else
+    vg_list = vgs.split
+    setcode { vg_list.length }
+  end
+end
+
+vg_num = 0
+vg_list.each do |vg|
+  Facter.add("lvm_vg_#{vg_num}") { setcode { vg } }
+  vg_num += 1
+end
+
+# PVs
+pv_list = []
+Facter.add('lvm_pvs') do
+  confine :lvm_support => :yes
+  pvs = Facter::Util::Resolution.exec('pvs -o name --noheadings 2>/dev/null')
+  if pvs.nil?
+    setcode { 0 }
+  else
+    pv_list = pvs.split
+    setcode { pv_list.length }
+  end
+end
+
+pv_num = 0
+pv_list.each do |pv|
+  Facter.add("lvm_pv_#{pv_num}") { setcode { pv } }
+  pv_num += 1
 end
