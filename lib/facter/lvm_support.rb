@@ -28,10 +28,8 @@ Facter.add('lvm_vgs') do
   end
 end
 
-vg_num = 0
-vg_list.each do |vg|
-  Facter.add("lvm_vg_#{vg_num}") { setcode { vg } }
-  vg_num += 1
+vg_list.each_with_index do |vg, i|
+  Facter.add("lvm_vg_#{i}") { setcode { vg } }
 end
 
 # PVs
