@@ -11,13 +11,8 @@ Facter.add('lvm_support') do
 
   setcode do
     vgdisplay =  Facter::Util::Resolution.exec('which vgs')
-    vgdisplay.nil? ? 'no' : 'yes'
+    vgdisplay.nil? ? nil : true
   end
-end
-
-# Default to no
-Facter.add('lvm_support') do
-  setcode { 'no' }
 end
 
 # VGs
