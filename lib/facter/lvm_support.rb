@@ -18,7 +18,7 @@ end
 # VGs
 vg_list = []
 Facter.add('lvm_vgs') do
-  confine :lvm_support => :yes
+  confine :lvm_support => true
   vgs = Facter::Util::Resolution.exec('vgs -o name --noheadings 2>/dev/null')
   if vgs.nil?
     setcode { 0 }
@@ -37,7 +37,7 @@ end
 # PVs
 pv_list = []
 Facter.add('lvm_pvs') do
-  confine :lvm_support => :yes
+  confine :lvm_support => true
   pvs = Facter::Util::Resolution.exec('pvs -o name --noheadings 2>/dev/null')
   if pvs.nil?
     setcode { 0 }
