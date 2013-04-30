@@ -1,11 +1,5 @@
-# outputs:
-# lvm_support: yes/no (based on "vgs" command presence)
-# lvm_pvs: [0-9]+
-# lvm_vgs: [0-9]+
-# lvm_pv_[0-9]+: physical volume name
-# lvm_vg_[0-9]+: volume group name
-
-# Generic LVM support
+# lvm_support: true/nil
+#   Whether there is LVM support (based on the presence of the "vgs" command)
 Facter.add('lvm_support') do
   confine :kernel => :linux
 
@@ -15,7 +9,8 @@ Facter.add('lvm_support') do
   end
 end
 
-# VGs
+# lvm_vgs: [0-9]+
+#   Number of VGs
 vg_list = []
 Facter.add('lvm_vgs') do
   confine :lvm_support => true
@@ -28,11 +23,14 @@ Facter.add('lvm_vgs') do
   end
 end
 
+# lvm_vg_[0-9]+
+#   VG name by index
 vg_list.each_with_index do |vg, i|
   Facter.add("lvm_vg_#{i}") { setcode { vg } }
 end
 
-# PVs
+# lvm_pvs: [0-9]+
+#   Number of PVs
 pv_list = []
 Facter.add('lvm_pvs') do
   confine :lvm_support => true
@@ -45,6 +43,8 @@ Facter.add('lvm_pvs') do
   end
 end
 
+# lvm_pv_[0-9]+
+#   PV name by index
 pv_list.each_with_index do |pv, i|
   Facter.add("lvm_pv_#{i}") { setcode { pv } }
 end
