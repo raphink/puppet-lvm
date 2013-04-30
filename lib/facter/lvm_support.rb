@@ -47,8 +47,6 @@ Facter.add('lvm_pvs') do
   end
 end
 
-pv_num = 0
-pv_list.each do |pv|
-  Facter.add("lvm_pv_#{pv_num}") { setcode { pv } }
-  pv_num += 1
+pv_list.each_with_index do |pv, i|
+  Facter.add("lvm_pv_#{i}") { setcode { pv } }
 end
