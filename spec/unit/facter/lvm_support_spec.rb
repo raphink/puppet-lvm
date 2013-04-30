@@ -11,7 +11,7 @@ describe 'lvm_support fact' do
   context 'when not on Linux' do
     it 'should be set to not' do
       Facter.fact(:kernel).expects(:value).returns('SunOs')
-      Facter.value(:lvm_support).should == 'no'
+      Facter.value(:lvm_support).should be_nil
     end
   end
 
@@ -20,15 +20,11 @@ describe 'lvm_support fact' do
       Facter.fact(:kernel).expects(:value).returns('Linux')
     end
 
-    it 'should exist' do
-      Facter.value(:lvm_support).should_not be_nil
-    end
-
     context 'when vgs is absent' do
       it 'should be set to no' do
         Facter::Util::Resolution.stubs('exec') # All other calls
         Facter::Util::Resolution.expects('exec').with('which vgs').returns(nil)
-        Facter.value(:lvm_support).should == 'no'
+        Facter.value(:lvm_support).should be_nil
       end
     end
 
@@ -36,7 +32,7 @@ describe 'lvm_support fact' do
       it 'should be set to yes' do
         Facter::Util::Resolution.stubs('exec') # All other calls
         Facter::Util::Resolution.expects('exec').with('which vgs').returns('/sbin/vgs')
-        Facter.value(:lvm_support).should == 'yes'
+        Facter.value(:lvm_support).should be_true
       end
     end
   end
