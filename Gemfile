@@ -5,6 +5,8 @@ group :development, :test do
   gem 'rspec', "~> 2.11.0", :require => false
   gem 'mocha', "~> 0.10.5", :require => false
   gem 'puppetlabs_spec_helper', :require => false
+  gem 'coveralls'
+  gem 'rspec-puppet', :git => 'https://github.com/raphink/rspec-puppet.git', :branch => 'dev/coveralls'
 end
 
 if puppetversion = ENV['PUPPET_GEM_VERSION']
